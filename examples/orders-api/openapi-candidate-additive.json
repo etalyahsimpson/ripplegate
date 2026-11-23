@@ -24,10 +24,6 @@
               "application/json": {
                 "schema": {
                   "properties": {
-                    "customer_id": {
-                      "description": "Customer the order belongs to",
-                      "type": "string"
-                    },
                     "fulfillment_note": {
                       "description": "Optional fulfillment note",
                       "nullable": true,
@@ -44,7 +40,6 @@
                   },
                   "required": [
                     "id",
-                    "customer_id",
                     "total_cents"
                   ],
                   "type": "object"
