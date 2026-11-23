@@ -15,7 +15,7 @@
 
 // Resolve the producer fixture both in a checkout (../orders-api) and inside
 // the controlled runner container (/suite/producer).
-let { createServer } = (() => { try { return require('../orders-api/server.js'); } catch { return require('/suite/producer/server.js'); } })();
+let { createServer } = (() => { try { return require('../orders-api/server.js'); } catch { return require('/producer/server.js'); } })();
 
 const candidatePath = process.argv[2];
 if (!candidatePath) {

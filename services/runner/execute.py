@@ -112,13 +112,11 @@ def execute_suite(*, suite_id: str, candidate_document: dict[str, Any],
 def _docker_command(allowed, candidate_path: Path, project_root: str) -> list[str]:
     """Hardened one-shot container profile. Fixed argv; no user input in it.
 
-    The consumer suite needs its locked dependencies (express) and the shared
-    producer module. The mount set therefore includes:
-      * the suite directory itself (read-only),
-      * the sibling node_modules of the consumer checkout (read-only),
-      * the orders-api producer directory (read-only, for ../orders-api/server.js),
-      * the pinned candidate document (read-only).
-    No writable mounts: scratch lives in the tmpfs the profile already grants.
+    Mount layout (all read-only; scratch lives in the profile's tmpfs):
+      /suite            the consumer suite directory (contract.test.js)
+      /suite/node_modules locked consumer dependencies (express)
+      /producer         the orders-api producer fixture (server.js)
+      /candidate.json   the pinned candidate document
     """
     root = Path(project_root).resolve()
     work = str(root / allowed.consumer_dir)
@@ -128,7 +126,7 @@ def _docker_command(allowed, candidate_path: Path, project_root: str) -> list[st
         *DOCKER_PROFILE,
         "-v", f"{work}:/suite:ro",
         "-v", f"{consumer_modules}:/suite/node_modules:ro",
-        "-v", f"{producer}:/suite/producer:ro",
+        "-v", f"{producer}:/producer:ro",
         "-v", f"{candidate_path}:/candidate.json:ro",
         "--user", "10001:10001",
         allowed.image_ref,
