@@ -125,10 +125,11 @@ def _docker_command(allowed, candidate_path: Path, project_root: str) -> list[st
     return [
         *DOCKER_PROFILE,
         "-v", f"{work}:/suite:ro",
-        "-v", f"{consumer_modules}:/suite/node_modules:ro",
+        "-v", f"{consumer_modules}:/deps:ro",
         "-v", f"{producer}:/producer:ro",
         "-v", f"{candidate_path}:/candidate.json:ro",
         "--user", "10001:10001",
+        "-e", "NODE_PATH=/deps",
         allowed.image_ref,
         "node", "/suite/contract.test.js", "/candidate.json",
     ]
