@@ -33,6 +33,11 @@
                       "nullable": true,
                       "type": "string"
                     },
+                    "gift_wrap": {
+                      "description": "Optional gift-wrap flag added by the compatible-change PR",
+                      "nullable": true,
+                      "type": "boolean"
+                    },
                     "id": {
                       "description": "Order identifier",
                       "type": "string"
