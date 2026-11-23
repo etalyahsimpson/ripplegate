@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 300" role="img" aria-label="RippleGate architecture: web and API talk to PostgreSQL and Redis; worker runs the pipeline and the allowlisted runner; policy writes assessments">
+  <rect width="760" height="300" fill="#0D1424"/>
+  <g font-family="system-ui" font-size="13" fill="#E9EEF5">
+    <rect x="20" y="20" width="150" height="50" rx="8" fill="#151F32" stroke="#629BFF"/><text x="95" y="50" text-anchor="middle">Next.js dashboard</text>
+    <rect x="230" y="20" width="150" height="50" rx="8" fill="#151F32" stroke="#629BFF"/><text x="305" y="50" text-anchor="middle">FastAPI API</text>
+    <rect x="440" y="20" width="150" height="50" rx="8" fill="#151F32" stroke="#37D9BC"/><text x="515" y="50" text-anchor="middle">PostgreSQL</text>
+    <rect x="230" y="110" width="150" height="50" rx="8" fill="#151F32" stroke="#E8B44A"/><text x="305" y="140" text-anchor="middle">Redis (queue)</text>
+    <rect x="20" y="110" width="150" height="50" rx="8" fill="#151F32" stroke="#629BFF"/><text x="95" y="140" text-anchor="middle">Celery worker</text>
+    <rect x="20" y="200" width="150" height="50" rx="8" fill="#151F32" stroke="#FF6B6B"/><text x="95" y="230" text-anchor="middle">Allowlisted runner</text>
+    <rect x="230" y="200" width="150" height="50" rx="8" fill="#151F32" stroke="#37D9BC"/><text x="305" y="230" text-anchor="middle">Policy engine</text>
+    <rect x="440" y="110" width="150" height="50" rx="8" fill="#151F32" stroke="#629BFF"/><text x="515" y="140" text-anchor="middle">GitHub adapter</text>
+    <g stroke="#629BFF" stroke-width="2" fill="none">
+      <path d="M170 45 H230"/><path d="M380 45 H440"/><path d="M230 70 V110"/><path d="M230 135 H170"/><path d="M95 110 V70"/><path d="M95 160 V200"/><path d="M170 225 H230"/>
+    </g>
+  </g>
+  <text x="20" y="285" font-family="system-ui" font-size="11" fill="#7A89A6">PostgreSQL is authoritative; Redis is queue transport only; API/web never mount the Docker socket.</text>
+</svg>

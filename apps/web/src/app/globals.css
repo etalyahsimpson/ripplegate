@@ -1,0 +1,36 @@
+@import "tailwindcss";
+:root {
+  --ink-900: #0D1424;
+  --ink-800: #151F32;
+  --ink-700: #1D2A42;
+  --signal-teal: #37D9BC;
+  --electric-blue: #629BFF;
+  --amber: #E8B44A;
+  --coral: #FF6B6B;
+  --pass-green: #4ADE9C;
+  --pale-slate: #E9EEF5;
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
+body { background: var(--ink-900); color: var(--pale-slate); font-family: system-ui, -apple-system, "Segoe UI", sans-serif; font-size: 15px; }
+a { color: var(--electric-blue); }
+:focus-visible { outline: 2px solid var(--signal-teal); outline-offset: 2px; }
+.card { background: var(--ink-800); border: 1px solid rgba(98,155,255,.18); border-radius: 10px; padding: 1rem 1.25rem; }
+.chip { display: inline-flex; align-items: center; border-radius: 999px; padding: 0.15rem 0.6rem; font-size: 0.75rem; font-weight: 600; border: 1px solid transparent; }
+.chip-BREAKING, .chip-BIM { background: rgba(255,107,107,.15); color: var(--coral); border-color: rgba(255,107,107,.4); }
+.chip-POTENTIALLY_BREAKING { background: rgba(232,180,74,.15); color: var(--amber); border-color: rgba(232,180,74,.4); }
+.chip-ADDITIVE, .chip-PASS { background: rgba(74,222,156,.12); color: var(--pass-green); border-color: rgba(74,222,156,.4); }
+.chip-UNKNOWN, .chip-REVIEW { background: rgba(232,180,74,.12); color: var(--amber); border-color: rgba(232,180,74,.35); }
+.chip-ERROR { background: rgba(255,107,107,.15); color: var(--coral); border-color: rgba(255,107,107,.4); }
+.chip-teal { background: rgba(55,217,188,.12); color: var(--signal-teal); border-color: rgba(55,217,188,.4); }
+code, pre { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 0.85em; }
+pre { background: var(--ink-900); border: 1px solid rgba(98,155,255,.15); border-radius: 8px; padding: 0.75rem 1rem; overflow-x: auto; }
+table.data { width: 100%; border-collapse: collapse; }
+table.data th { text-align: left; color: rgba(233,238,245,.6); font-weight: 600; font-size: 0.75rem; text-transform: uppercase; padding: 0.5rem 0.75rem; border-bottom: 1px solid rgba(98,155,255,.2); }
+table.data td { padding: 0.5rem 0.75rem; border-bottom: 1px solid rgba(98,155,255,.08); }
+.btn { background: var(--electric-blue); color: var(--ink-900); font-weight: 700; border-radius: 8px; padding: 0.5rem 1rem; border: none; cursor: pointer; }
+.btn:hover { filter: brightness(1.1); }
+.btn-teal { background: var(--signal-teal); }
+.btn[disabled] { opacity: .5; cursor: not-allowed; }
+.muted { color: rgba(233,238,245,.55); }

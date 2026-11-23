@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 240" role="img" aria-label="RippleGate banner: an upstream change ripples through dependent services and is caught by one protected gate">
+  <rect width="960" height="240" fill="#0D1424"/>
+  <g stroke="#629BFF" stroke-width="2" fill="none" opacity="0.55">
+    <path d="M 210 120 C 260 60, 300 60, 350 120"/>
+    <path d="M 210 120 C 260 180, 300 180, 350 120"/>
+  </g>
+  <circle cx="180" cy="120" r="18" fill="#37D9BC"/>
+  <text x="180" y="125" text-anchor="middle" font-family="system-ui" font-size="14" fill="#0D1424" font-weight="700">v1</text>
+  <circle cx="420" cy="70" r="14" fill="#151F32" stroke="#FF6B6B" stroke-width="2.5"/>
+  <text x="420" y="75" text-anchor="middle" font-family="system-ui" font-size="12" fill="#FF6B6B">✕</text>
+  <circle cx="420" cy="170" r="14" fill="#151F32" stroke="#4ADE9C" stroke-width="2.5"/>
+  <text x="420" y="175" text-anchor="middle" font-family="system-ui" font-size="12" fill="#4ADE9C">✓</text>
+  <g stroke="#FF6B6B" stroke-width="2.5" fill="none"><rect x="510" y="96" width="48" height="48" rx="8"/></g>
+  <text x="534" y="127" text-anchor="middle" font-family="system-ui" font-size="20" fill="#FF6B6B" font-weight="800">G</text>
+  <text x="600" y="112" font-family="system-ui" font-size="44" font-weight="800" fill="#E9EEF5">RippleGate</text>
+  <text x="600" y="150" font-family="system-ui" font-size="17" fill="#37D9BC">Release confidence backed by consumer evidence</text>
+  <text x="600" y="182" font-family="system-ui" font-size="13" fill="#7A89A6">OpenAPI diff · migration risk · consumer graph · executed proof</text>
+</svg>

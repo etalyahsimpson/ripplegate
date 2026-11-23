@@ -1,0 +1,83 @@
+name: ci
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  python-quality:
+    name: python-quality
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-bookworm
+        env: { POSTGRES_USER: ripplegate, POSTGRES_PASSWORD: ripplegate, POSTGRES_DB: ripplegate }
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U ripplegate" --health-interval 5s --health-timeout 5s --health-retries 10
+    env:
+      SESSION_SIGNING_SECRET: ci-secret
+      WEBHOOK_SECRET: ci-webhook-secret
+      ARTIFACT_DIR: /tmp/rg-artifacts
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - run: pip install -r services/api/requirements.txt
+      - name: Syntax/type sanity
+        run: python -m compileall -q services/api/app services/worker services/runner
+      - name: pytest (parser/rules/policy/auth/webhook/db/workflows/runner)
+        run: RG_DATABASE_URL="host=127.0.0.1 port=5432 user=ripplegate password=ripplegate dbname=ripplegate" RG_PG_PORT=5432 python3 -m pytest tests/python -q
+      - name: Upload evidence artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with: { name: python-test-evidence, path: '*.log', if-no-files-found: ignore }
+
+  fixture-contracts:
+    name: fixture-contracts
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: "22" }
+      - name: Install consumer fixture deps
+        run: |
+          (cd examples/orders-api && npm ci)
+          (cd examples/billing-service && npm ci)
+          (cd examples/reporting-service && npm ci)
+      - name: Expected-negative: billing FAILS on breaking candidate (correctly detected)
+        run: |
+          set -e
+          cd examples/billing-service
+          node contract.test.js ../orders-api/openapi-candidate-breaking.json && { echo "expected failure did not occur"; exit 1; } || [ $? -eq 1 ]
+      - name: Billing PASSES on additive candidate
+        run: cd examples/billing-service && node contract.test.js ../orders-api/openapi-candidate-additive.json
+      - name: Reporting PASSES on additive candidate
+        run: cd examples/reporting-service && node contract.test.js ../orders-api/openapi-candidate-additive.json
+
+  web-quality:
+    name: web-quality
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: "22" }
+      - run: npm --prefix apps/web ci
+      - run: npm --prefix apps/web run typecheck
+      - run: npm --prefix apps/web run build
+
+  source-policy:
+    name: source-policy
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Technology lock + link audit
+        run: |
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+          bash scripts/verify-technology-lock.sh
+          bash scripts/verify-links.sh

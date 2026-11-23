@@ -1,0 +1,46 @@
+{
+  "schema_version": "1.0",
+  "name": "RippleGate",
+  "slug": "ripplegate",
+  "description": "Evidence-led API compatibility and release impact analysis",
+  "target_users": ["API maintainers", "release engineers", "downstream developers"],
+  "implemented_features": [
+    "bounded OpenAPI 3.0/3.1 diff with versioned rule engine",
+    "bounded PostgreSQL migration risk parser (text-only)",
+    "registered consumer dependency graph with honest coverage",
+    "controlled consumer test execution (allowlisted suites, real Node assertions)",
+    "deterministic BLOCK/REVIEW/PASS policy with immutable evidence",
+    "FastAPI REST surface with demo sessions and scoped authorization",
+    "GitHub webhook HMAC validation and deduplication",
+    "Next.js dashboard with evidence ladder, diff viewer, dependency graph",
+    "GitHub Actions CI workflow (python-quality, fixture-contracts, web-quality, source-policy)",
+    "Docker Compose local deployment and operational scripts"
+  ],
+  "planned_features": [
+    "GitHub App Checks API mode (APP_MODE_UNCONFIGURED without credentials)",
+    "public cloud deployment (no authorized host)"
+  ],
+  "tech_stack": {
+    "python": ["3.12", "fastapi 0.128", "pydantic 2.12", "celery 5.7", "psycopg 3.3", "pyyaml 6.0.3", "pytest 9.0"],
+    "typescript": ["next 15.5.6", "react 19.2.1", "tanstack query 5.90", "zod 4.1", "tailwind 4.1"],
+    "javascript": ["node 22", "express 5.3"],
+    "database": ["postgresql 16", "redis 7"],
+    "platform": ["docker", "github actions"]
+  },
+  "languages_planned_effort_percent": {"Python": 38, "TypeScript": 34, "SQL": 14, "JavaScript": 6, "CSS": 5, "Bash": 3},
+  "data_provenance": "Synthetic demonstration fixtures only",
+  "source_url": "https://github.com/etalyahsimpson/ripplegate",
+  "ci_workflow": ".github/workflows/ci.yml",
+  "public_runtime_url": null,
+  "local_run_verified": true,
+  "ci_final_sha_verified": false,
+  "verification_evidence_paths": ["docs/EVIDENCE_INDEX.md", "docs/TESTING.md"],
+  "known_limitations": [
+    "bounded OpenAPI/SQL subsets; unsupported constructs reported UNKNOWN",
+    "only registered consumers mapped",
+    "demo sessions are not production identity",
+    "GitHub App mode unconfigured",
+    "public deployment not verified (no authorized host)",
+    "Docker unavailable in the build sandbox; compose path documented but not executed here"
+  ]
+}

@@ -1,0 +1,86 @@
+# RippleGate local deployment: web + api + postgres + redis + worker.
+# The API/web/worker containers never mount the Docker socket (see SECURITY.md);
+# consumer fixtures run via the host/CI launcher with a hardened one-shot profile.
+services:
+  postgres:
+    image: postgres:16-bookworm
+    environment:
+      POSTGRES_USER: ripplegate
+      POSTGRES_PASSWORD: ripplegate-local-only
+      POSTGRES_DB: ripplegate
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ripplegate -d ripplegate"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    networks: [backend]
+
+  redis:
+    image: redis:7-bookworm
+    command: ["redis-server", "--appendonly", "no", "--save", ""]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    networks: [backend]
+
+  api:
+    build:
+      context: .
+      dockerfile: services/api/Dockerfile
+    environment:
+      APP_ENV: local
+      DEMO_MODE: "true"
+      DATABASE_URL: postgres://ripplegate:ripplegate-local-only@postgres:5432/ripplegate
+      REDIS_URL: redis://redis:6379/0
+      SESSION_SIGNING_SECRET: ${SESSION_SIGNING_SECRET:?set in .env}
+      WEBHOOK_SECRET: ${WEBHOOK_SECRET:?set in .env}
+      GITHUB_OWNER: etalyahsimpson
+      GITHUB_REPO: ripplegate
+      GITHUB_INTEGRATION_MODE: actions
+      RUNNER_MODE: local-launcher
+      RUNNER_ALLOWED_SUITES: billing-contract,reporting-contract
+      ARTIFACT_DIR: /var/lib/ripplegate/artifacts
+      WORKER_INLINE: "false"
+    depends_on:
+      postgres: { condition: service_healthy }
+      redis: { condition: service_healthy }
+    ports: ["8000:8000"]
+    networks: [backend]
+
+  worker:
+    build:
+      context: .
+      dockerfile: services/worker/Dockerfile
+    environment:
+      DATABASE_URL: postgres://ripplegate:ripplegate-local-only@postgres:5432/ripplegate
+      REDIS_URL: redis://redis:6379/0
+      SESSION_SIGNING_SECRET: ${SESSION_SIGNING_SECRET:?set in .env}
+      WEBHOOK_SECRET: ${WEBHOOK_SECRET:?set in .env}
+      ARTIFACT_DIR: /var/lib/ripplegate/artifacts
+      MAX_RUN_SECONDS: "120"
+    depends_on:
+      postgres: { condition: service_healthy }
+      redis: { condition: service_healthy }
+    networks: [backend]
+
+  web:
+    build:
+      context: ./apps/web
+    environment:
+      API_BASE_URL: http://api:8000
+      NEXT_PUBLIC_API_BASE_URL: http://localhost:8000
+    depends_on:
+      api: { condition: service_started }
+    ports: ["3000:3000"]
+    networks: [backend]
+
+volumes:
+  pgdata:
+
+networks:
+  backend:
+    driver: bridge

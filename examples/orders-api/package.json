@@ -1,0 +1,13 @@
+{
+  "name": "ripplegate-orders-api-fixture",
+  "version": "1.0.0",
+  "private": true,
+  "description": "RippleGate controlled fixture (orders-api) - synthetic demonstration data",
+  "license": "MIT",
+  "engines": {
+    "node": ">=22"
+  },
+  "dependencies": {
+    "express": "^5.3.0"
+  }
+}

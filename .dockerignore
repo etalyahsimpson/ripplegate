@@ -1,0 +1,11 @@
+**/__pycache__
+**/.pytest_cache
+**/node_modules
+**/.next
+**/.git
+**/*.log
+.env
+.env.*
+!/.env.example
+tests/e2e/test-results
+tests/e2e/playwright-report

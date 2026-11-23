@@ -1,0 +1,23 @@
+[
+  {
+    "case": "rename-customer-id",
+    "description": "rename customer_id to account_id in 200 response",
+    "expected_outcome": "BLOCK",
+    "base": "examples/orders-api/openapi-base.json",
+    "candidate": "examples/orders-api/openapi-candidate-breaking.json"
+  },
+  {
+    "case": "add-optional-field",
+    "description": "add optional fulfillment_note response property",
+    "expected_outcome": "PASS",
+    "base": "examples/orders-api/openapi-base.json",
+    "candidate": "examples/orders-api/openapi-candidate-additive.json"
+  },
+  {
+    "case": "external-ref",
+    "description": "response schema uses external $ref",
+    "expected_outcome": "REVIEW",
+    "base": "examples/orders-api/openapi-base.json",
+    "candidate": "examples/orders-api/openapi-candidate-external-ref.json"
+  }
+]

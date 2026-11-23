@@ -1,0 +1,76 @@
+{
+  "info": {
+    "title": "Demo Orders API",
+    "version": "1.0"
+  },
+  "openapi": "3.0.3",
+  "paths": {
+    "/orders/{id}": {
+      "get": {
+        "operationId": "getOrder",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "customer_id": {
+                      "description": "Customer the order belongs to",
+                      "type": "string"
+                    },
+                    "id": {
+                      "description": "Order identifier",
+                      "type": "string"
+                    },
+                    "total_cents": {
+                      "description": "Order total in cents",
+                      "type": "integer"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "customer_id",
+                    "total_cents"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Order record"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Order not found"
+          }
+        },
+        "summary": "Fetch one order"
+      }
+    }
+  },
+  "servers": [
+    {
+      "url": "https://orders.demo.invalid"
+    }
+  ]
+}
