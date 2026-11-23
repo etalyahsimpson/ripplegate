@@ -1,4 +1,4 @@
--- Linguist classification notes: not used to hide technology use.
+# Linguist classification: mark vendored lockfiles so language statistics stay accurate.
 # Mark vendored/minified third-party lockfiles that Linguist would misread as first-party source.
 package-lock.json linguist-generated=true
 pnpm-lock.yaml linguist-generated=true

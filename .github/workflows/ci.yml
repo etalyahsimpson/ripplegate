@@ -50,7 +50,7 @@ jobs:
           (cd examples/orders-api && npm ci)
           (cd examples/billing-service && npm ci)
           (cd examples/reporting-service && npm ci)
-      - name: Expected-negative: billing FAILS on breaking candidate (correctly detected)
+      - name: Expected-negative, billing FAILS on breaking candidate (correct detection)
         run: |
           set -e
           cd examples/billing-service
