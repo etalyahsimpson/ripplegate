@@ -29,6 +29,13 @@ jobs:
       - uses: actions/setup-python@v5
         with: { python-version: "3.12" }
       - run: pip install -r services/api/requirements.txt
+      - uses: actions/setup-node@v4
+        with: { node-version: "22" }
+      - name: Install consumer fixture dependencies (suites execute in python-quality)
+        run: |
+          (cd examples/orders-api && npm ci)
+          (cd examples/billing-service && npm ci)
+          (cd examples/reporting-service && npm ci)
       - name: Syntax/type sanity
         run: python -m compileall -q services/api/app services/worker services/runner
       - name: pytest (parser/rules/policy/auth/webhook/db/workflows/runner)
