@@ -27,9 +27,9 @@ export default function RunDetailPage({ params }: { params: Promise<{ id: string
         <div className="card">
           <EvidenceLadder items={[
             { label: "1. Structural change detected", value: `${Object.values(d.finding_counts).reduce((a, b) => a + b, 0)} findings (BREAKING ${d.finding_counts.BREAKING || 0}, ADDITIVE ${d.finding_counts.ADDITIVE || 0}, UNKNOWN ${d.finding_counts.UNKNOWN || 0})` },
-            { label: "2. Rule classification (versioned, deterministic)", value: findings.data?.items.map((f) => f.rule_id).join(", ") || "—" },
+            { label: "2. Rule classification (versioned, deterministic)", value: findings.data?.items.map((f) => f.rule_id).join(", ") || "n/a" },
             { label: "3. Registered consumer impact", value: "billing-service (customer_id required) · reporting-service (total_cents required)" },
-            { label: "4. Executed test outcome", value: tests.data?.items.map((t) => `${t.suite_id}: ${t.status}`).join(", ") || "—" },
+            { label: "4. Executed test outcome", value: tests.data?.items.map((t) => `${t.suite_id}: ${t.status}`).join(", ") || "n/a" },
           ]} />
         </div>
       </section>

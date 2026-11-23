@@ -18,8 +18,8 @@ export default function TestsPage({ params }: { params: Promise<{ id: string }> 
           <h2 style={{ fontSize: "1rem", margin: 0 }}>{t.suite_id}</h2>
           <table className="data"><tbody>
             <tr><td>Status</td><td><span className={`chip chip-${t.status === "PASSED" ? "PASS" : "BREAKING"}`}>{t.status}</span></td></tr>
-            <tr><td>Exit code</td><td>{t.exit_code ?? "—"}</td></tr>
-            <tr><td>Duration</td><td>{t.duration_ms ?? "—"} ms</td></tr>
+            <tr><td>Exit code</td><td>{t.exit_code ?? "n/a"}</td></tr>
+            <tr><td>Duration</td><td>{t.duration_ms ?? "n/a"} ms</td></tr>
             <tr><td>Fixture digest</td><td><code>{t.fixture_digest.slice(0, 24)}…</code></td></tr>
             <tr><td>Runner image</td><td className="muted">{t.image_ref}</td></tr>
             <tr><td>Reproduce</td><td><code>node examples/{t.suite_id === "billing-contract" ? "billing-service" : "reporting-service"}/contract.test.js &lt;candidate.json&gt;</code></td></tr>
