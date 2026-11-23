@@ -19,7 +19,7 @@ export default function RunDetailPage({ params }: { params: Promise<{ id: string
       <nav aria-label="Breadcrumb" className="muted" style={{ fontSize: "0.8rem" }}><Link href="/analyses">Analyses</Link> / {d.id.slice(0, 8)}</nav>
       <h1 style={{ margin: "0.5rem 0" }}>Run evidence <OutcomeChip outcome={d.assessment} /></h1>
       <section className="card" aria-label="Run identity">
-        <p style={{ margin: 0 }}><strong>Source:</strong> {d.source_type === "FIXTURE" ? `fixture fingerprint (never a git SHA)` : "GitHub commit"}</p>
+        <p style={{ margin: 0 }}><strong>Source:</strong> {d.source_type === "FIXTURE" ? "Versioned contract fixture" : "GitHub commit"}</p>
         <p className="muted" style={{ fontSize: "0.85rem" }}>base <code>{d.base_identity}</code> → candidate <code>{d.candidate_identity}</code> · policy v{d.policy_version} · state {d.state}</p>
       </section>
       <section aria-labelledby="ladder-title">

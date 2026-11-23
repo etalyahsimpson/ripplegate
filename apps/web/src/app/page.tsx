@@ -37,7 +37,7 @@ export default function Dashboard() {
             {items.slice(0, 8).map((r) => (
               <tr key={r.id}>
                 <td><Link href={`/analyses/${r.id}`}>{r.id.slice(0, 8)}</Link></td>
-                <td className="muted">{r.source_type === "FIXTURE" ? "Fixture fingerprint" : "GitHub commit"}</td>
+                <td className="muted">{r.source_type === "FIXTURE" ? "Contract fixture" : "GitHub commit"}</td>
                 <td className="muted" style={{ fontSize: "0.8rem" }}>{r.base_identity} → {r.candidate_identity}</td>
                 <td><StateChip state={r.state} /></td>
                 <td><OutcomeChip outcome={r.assessment} /></td>

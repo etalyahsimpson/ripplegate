@@ -20,7 +20,7 @@ export default function AnalysesPage() {
           {items.map((r) => (
             <tr key={r.id}>
               <td><Link href={`/analyses/${r.id}`}>{r.id.slice(0, 8)}</Link></td>
-              <td className="muted">{r.source_type}</td>
+              <td className="muted">{r.source_type === "FIXTURE" ? "Contract fixture" : "GitHub commit"}</td>
               <td className="muted" style={{ fontSize: "0.75rem" }}>{r.base_identity} / {r.candidate_identity}</td>
               <td className="muted">v{r.policy_version}</td>
               <td><StateChip state={r.state} /></td>

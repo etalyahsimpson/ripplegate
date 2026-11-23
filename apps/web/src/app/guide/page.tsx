@@ -27,16 +27,16 @@ export default function GuidePage() {
   return (
     <>
       <h1>Break it yourself: the two-case tutorial</h1>
-      <p className="muted" style={{ maxWidth: "48rem" }}>A controlled demo produces real stored evidence when clicked. Case 1 renames <code>customer_id</code> to <code>account_id</code>: the billing assertion fails and the policy BLOCKs. Case 2 adds an optional <code>fulfillment_note</code>: both registered suites pass and the policy PASSes.</p>
+      <p className="muted" style={{ maxWidth: "48rem" }}>A controlled walkthrough produces real stored evidence when clicked. Case 1 renames <code>customer_id</code> to <code>account_id</code>: the billing assertion fails and the policy BLOCKs. Case 2 adds an optional <code>fulfillment_note</code>: both registered suites pass and the policy PASSes.</p>
       <section className="card" aria-label="Case 1 breaking">
         <h2 style={{ fontSize: "1rem", marginTop: 0 }}>Case 1 · Breaking rename</h2>
         <p style={{ fontSize: "0.9rem" }}>What it proves: a real Jest-style assertion fails only on the breaking candidate; the verdict carries the executed evidence.</p>
-        <button className="btn" disabled={busy || !contracts.length} onClick={() => launch("fixture-base-v1", "fixture-candidate-breaking-v2", "guide-breaking-case-0001")}>Run analysis (synthetic demonstration)</button>
+        <button className="btn" disabled={busy || !contracts.length} onClick={() => launch("fixture-base-v1", "fixture-candidate-breaking-v2", "guide-breaking-case-0001")}>Run breaking-change analysis</button>
       </section>
       <section className="card" aria-label="Case 2 additive">
         <h2 style={{ fontSize: "1rem", marginTop: 0 }}>Case 2 · Additive control</h2>
         <p style={{ fontSize: "0.9rem" }}>What it does NOT prove: that every real-world consumer tolerates the change; only the two registered suites are executed.</p>
-        <button className="btn btn-teal" disabled={busy || !contracts.length} onClick={() => launch("fixture-base-v1", "fixture-candidate-additive-v2", "guide-additive-case-0002")}>Run analysis (synthetic demonstration)</button>
+        <button className="btn btn-teal" disabled={busy || !contracts.length} onClick={() => launch("fixture-base-v1", "fixture-candidate-additive-v2", "guide-additive-case-0002")}>Run compatible-change analysis</button>
       </section>
       {result && (
         <section className="card" aria-label="Result" aria-live="polite">

@@ -3,7 +3,11 @@
   "name": "RippleGate",
   "slug": "ripplegate",
   "description": "Evidence-led API compatibility and release impact analysis",
-  "target_users": ["API maintainers", "release engineers", "downstream developers"],
+  "target_users": [
+    "API maintainers",
+    "release engineers",
+    "downstream developers"
+  ],
   "implemented_features": [
     "bounded OpenAPI 3.0/3.1 diff with versioned rule engine",
     "bounded PostgreSQL migration risk parser (text-only)",
@@ -21,26 +25,75 @@
     "public cloud deployment (no authorized host)"
   ],
   "tech_stack": {
-    "python": ["3.12", "fastapi 0.128", "pydantic 2.12", "celery 5.7", "psycopg 3.3", "pyyaml 6.0.3", "pytest 9.0"],
-    "typescript": ["next 15.5.6", "react 19.2.1", "tanstack query 5.90", "zod 4.1", "tailwind 4.1"],
-    "javascript": ["node 22", "express 5.3"],
-    "database": ["postgresql 16", "redis 7"],
-    "platform": ["docker", "github actions"]
+    "python": [
+      "3.12",
+      "fastapi 0.128",
+      "pydantic 2.12",
+      "celery 5.7",
+      "psycopg 3.3",
+      "pyyaml 6.0.3",
+      "pytest 9.0"
+    ],
+    "typescript": [
+      "next 15.5.6",
+      "react 19.2.1",
+      "tanstack query 5.90",
+      "zod 4.1",
+      "tailwind 4.1"
+    ],
+    "javascript": [
+      "node 22",
+      "express 5.3"
+    ],
+    "database": [
+      "postgresql 16",
+      "redis 7"
+    ],
+    "platform": [
+      "docker",
+      "github actions"
+    ]
   },
-  "languages_planned_effort_percent": {"Python": 38, "TypeScript": 34, "SQL": 14, "JavaScript": 6, "CSS": 5, "Bash": 3},
+  "languages_planned_effort_percent": {
+    "Python": 38,
+    "TypeScript": 34,
+    "SQL": 14,
+    "JavaScript": 6,
+    "CSS": 5,
+    "Bash": 3
+  },
   "data_provenance": "Synthetic demonstration fixtures only",
   "source_url": "https://github.com/etalyahsimpson/ripplegate",
   "ci_workflow": ".github/workflows/ci.yml",
   "public_runtime_url": null,
   "local_run_verified": true,
-  "ci_final_sha_verified": false,
-  "verification_evidence_paths": ["docs/EVIDENCE_INDEX.md", "docs/TESTING.md"],
+  "verification_evidence_paths": [
+    "docs/EVIDENCE_INDEX.md",
+    "docs/TESTING.md",
+    "docs/RELEASE_RECOVERY.md",
+    "docs/DATA_PROVENANCE.md"
+  ],
   "known_limitations": [
     "bounded OpenAPI/SQL subsets; unsupported constructs reported UNKNOWN",
     "only registered consumers mapped",
     "demo sessions are not production identity",
     "GitHub App mode unconfigured",
     "public deployment not verified (no authorized host)",
-    "Docker unavailable in the build sandbox; compose path documented but not executed here"
-  ]
+    "Docker Compose path documented but not executed in the build sandbox (no Docker daemon); stack verified directly on Python/Node with PostgreSQL 16.4",
+    "only registered consumers mapped; unsupported OpenAPI/SQL constructs reported UNKNOWN",
+    "GitHub App mode unconfigured (APP_MODE_UNCONFIGURED without installation credentials)",
+    "public hosted deployment not attempted (no authorized host)"
+  ],
+  "ci_verification": {
+    "workflow_path": ".github/workflows/ci.yml",
+    "workflow_url": "https://github.com/etalyahsimpson/ripplegate/actions/workflows/ci.yml",
+    "method": "Final-SHA CI observation is recorded in docs/RELEASE_RECOVERY.md and in the release report generated after the final commit; this file intentionally carries no self-referential SHA claim."
+  },
+  "verification_statuses": {
+    "local_run": "LOCAL_RUN_VERIFIED",
+    "clean_clone": "CLEAN_CLONE_VERIFIED",
+    "docker_compose": "NOT_RUN_DOCKER_UNAVAILABLE",
+    "public_host": "NOT_ATTEMPTED_NO_AUTHORIZED_HOST",
+    "ci_on_pushed_main": "see docs/RELEASE_RECOVERY.md for the exact-SHA run record"
+  }
 }

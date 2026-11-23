@@ -1,38 +1,34 @@
 <p align="center"><img src="assets/banner.svg" alt="RippleGate banner: an upstream change ripples through dependent services and is caught by one protected gate" width="100%"/></p>
 
-# RippleGate: Release confidence backed by consumer evidence.
+# RippleGate: release confidence backed by consumer evidence
 
-Producer-side green tests do not catch consumer-breaking API and database changes. RippleGate knows which integrations a release will break, and shows the evidence before it ships.
+RippleGate traces API changes to downstream consumers, reproduces compatibility failures, and gives release teams evidence they can act on. Producer-side green tests do not catch consumer-breaking changes; RippleGate connects the contract diff, the registered consumer graph, and executed contract tests into one auditable release decision.
 
-**Status strip (all claims verified against the real repo):** CI [![ci](https://github.com/etalyahsimpson/ripplegate/actions/workflows/ci.yml/badge.svg)](https://github.com/etalyahsimpson/ripplegate/actions) · local runtime verified in the build sandbox against PostgreSQL 16 · public deployment `PUBLIC_DEPLOYMENT_NOT_VERIFIED` (no authorized host) · GitHub App mode `APP_MODE_UNCONFIGURED`.
-
-Two immediate routes: **[Reproduce a breaking change](docs/REPRODUCE_BREAKAGE.md)** (`bash scripts/demo-breaking.sh` → BLOCK) and **[See a compatible control](docs/REPRODUCE_BREAKAGE.md)** (`bash scripts/demo-compatible.sh` → PASS).
+[![ci](https://github.com/etalyahsimpson/ripplegate/actions/workflows/ci.yml/badge.svg)](https://github.com/etalyahsimpson/ripplegate/actions/workflows/ci.yml) · [Architecture](docs/ARCHITECTURE.md) · [Compatibility Rules](docs/COMPATIBILITY_RULES.md) · [Walkthrough](docs/REPRODUCE_BREAKAGE.md) · [Testing Evidence](docs/TESTING.md) · [Security](docs/SECURITY.md) · [Decision Log](docs/DECISIONS.md) · [Case Study](docs/CASE_STUDY.md) · [Data Provenance](docs/DATA_PROVENANCE.md)
 
 ![Overview](assets/overview.png)
 
-*(Overview screenshot captured from the real running application against seeded runs; see docs/EVIDENCE_INDEX.md. If you are reading a fork before the screenshot was captured, this placeholder is intentionally absent rather than a mockup.)*
+*The dashboard above is a screenshot of the running application: analysis runs with their policy outcomes, loaded live from the API against the PostgreSQL store.*
 
-## Capabilities
-OpenAPI 3.0/3.1 bounded diff · bounded PostgreSQL migration risk · registered consumer dependency graph · isolated executed consumer tests · deterministic policy (BLOCK/REVIEW/PASS) · GitHub Actions check path · human-governed release decisions.
+## Three capabilities, one decision
 
-## The four-layer evidence ladder (kept separate everywhere)
-1. detected structural change (exact JSON pointer / SQL statement)
-2. versioned rule classification (deterministic Python engine, never an LLM)
-3. registered consumer impact (only declared edges; missing coverage stays UNKNOWN)
-4. executed test outcome (real Node assertions, sanitized logs, digests)
+1. **Change detection.** A bounded, deterministic OpenAPI 3.0/3.1 diff engine records every structural change at an exact JSON pointer, with a versioned rule set (`docs/COMPATIBILITY_RULES.md`) and directional request/response semantics.
+2. **Downstream impact evidence.** The registered consumer dependency graph links each finding to the services that consume it, distinguishes affected from unaffected consumers, and keeps coverage honest: a finding with no registered consumer is UNKNOWN coverage, never "no consumers" (`docs/DATA_MODEL.md`).
+3. **CI/PR release decisions.** Controlled consumer suites execute in isolation with real assertions, and the release policy emits `BLOCK`, `REVIEW`, `PASS` or `ERROR` with an evidence digest. GitHub Actions runs the full gate on every push and pull request; a breaking PR fails the gate by design.
 
-`UNKNOWN`, `UNSUPPORTED`, runner outages and missing dependency information are first-class results and are **never** rendered as PASS.
+## The 30-second walkthrough
 
-## The 30-second story
-`orders-api` renames `customer_id` → `account_id`. RippleGate records `API-RESP-REQUIRED-REMOVED` (BREAKING, critical) at `/paths/~1orders~1{id}/get/responses/200/.../properties/customer_id`, links the registered billing-service edge, executes its real contract suite (exit 1, `FAIL: response contains customer_id`), and policy v1 returns **BLOCK** with an evidence digest. The additive control (optional `fulfillment_note`) passes both suites and returns **PASS**. A human release owner retains final authority.
+The reference producer `orders-api` renames `customer_id` to `account_id` in `GET /orders/{id}`. RippleGate records `API-RESP-REQUIRED-REMOVED` (BREAKING, critical) at the exact schema pointer, links the registered billing-service edge, executes the billing contract suite, which fails with exit 1 on the missing field, and policy v1 returns **BLOCK** with the executed assertion as evidence. The compatible control adds an optional response field, passes both registered suites, and returns **PASS**. Reproduce both in under a minute: [docs/REPRODUCE_BREAKAGE.md](docs/REPRODUCE_BREAKAGE.md). Two controlled pull requests demonstrate the same gate live on GitHub: [PR #1](https://github.com/etalyahsimpson/ripplegate/pull/1) (breaking, gate correctly red) and [PR #2](https://github.com/etalyahsimpson/ripplegate/pull/2) (compatible, gate green).
 
 ## Architecture
+
 ![Architecture](assets/architecture.svg)
 
-Full walkthrough: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) · rules: [docs/COMPATIBILITY_RULES.md](docs/COMPATIBILITY_RULES.md) · data model: [docs/DATA_MODEL.md](docs/DATA_MODEL.md) · security: [docs/SECURITY.md](docs/SECURITY.md).
+PostgreSQL is the authoritative store for every run, finding and verdict; Redis is queue transport only. The rule engine lives in one deterministic module; the web app renders results and never re-classifies. The controlled runner executes pinned suites with a fixed argument vector and a hardened one-shot container profile. Full walkthrough: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
 
 ## Local run
-Prereqs: Docker + Compose (or Python 3.12 / Node 22 / Postgres 16 / Redis 7). Then:
+
+Docker + Compose:
 
 ```
 cp .env.example .env            # set the two signing secrets
@@ -40,16 +36,27 @@ docker compose up --build -d
 bash scripts/bootstrap.sh && bash scripts/demo-breaking.sh && bash scripts/demo-compatible.sh
 ```
 
-Health: `curl localhost:8000/api/v1/health` (liveness) and `/api/v1/ready` (readiness, 503 when Postgres is down).
+Without Docker (Python 3.12, Node 22, PostgreSQL 16): start `uvicorn` against your database, apply `db/migrations`, and run the same walkthrough scripts against `API_BASE_URL`. Health endpoints: `/api/v1/health` (liveness) and `/api/v1/ready` (readiness; 503 when PostgreSQL is down). Details: [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md).
 
-## Tests
-`python3 -m pytest tests/python -q` (145 tests incl. adversarial: forged sessions, tampered webhooks, oversized/cyclic contracts, cross-tenant denial, runner injection rejection, retry idempotency) · `node examples/billing-service/contract.test.js …breaking.json` (expected-negative exit 1) · `npm --prefix apps/web run typecheck && npm --prefix apps/web run build`. CI runs the same gates plus a real Postgres service ([.github/workflows/ci.yml](.github/workflows/ci.yml)).
+## Testing evidence
+
+- **145 pytest tests** covering the parser bounds (size, depth, node budget, YAML anchors/aliases, external refs, cycles), rule directionality across OpenAPI 3.0/3.1 dialects, migration risk classification, policy calculus, authorization boundaries, webhook HMAC validation and dedup, database constraints, worker idempotency, and runner allowlist controls.
+- **Expected-negative consumer checks**: the billing suite failing on the breaking candidate is asserted as correct detection in CI ([.github/workflows/ci.yml](.github/workflows/ci.yml)).
+- **Web quality**: strict TypeScript typecheck and a production Next.js build.
+- **Clean-clone verification**: the public repository clones fresh, installs locked dependencies, applies migrations, and reproduces the BLOCK and PASS scenarios end to end ([docs/RELEASE_RECOVERY.md](docs/RELEASE_RECOVERY.md)).
 
 ## Technology
-Python 3.12 (FastAPI/Pydantic/Celery/psycopg/PyYAML-safe), PostgreSQL 16 migrations, Redis 7 queue-only, Next.js 15 App Router + TypeScript strict + Tailwind + TanStack Query, Node 22/Express consumer fixtures, Docker Compose, GitHub Actions. Closed technology lock audited by `bash scripts/verify-technology-lock.sh`. No other languages/frameworks are used.
 
-## Tradeoffs & limits
-Unsupported OpenAPI/SQL constructs stay UNKNOWN (fail closed) instead of guessed. Only registered consumers are mapped. Consumer execution is limited to two pinned allowlisted suites - a controlled fixture system, not arbitrary-code sandboxing. Demo sessions are development identities. Details: [docs/LIMITATIONS.md](docs/LIMITATIONS.md), [docs/DECISIONS.md](docs/DECISIONS.md), evidence map: [docs/EVIDENCE_INDEX.md](docs/EVIDENCE_INDEX.md), portfolio: [docs/PORTFOLIO_INTEGRATION.md](docs/PORTFOLIO_INTEGRATION.md), case study: [docs/CASE_STUDY.md](docs/CASE_STUDY.md).
+Python 3.12 (FastAPI, Pydantic, Celery, psycopg, PyYAML safe loading), PostgreSQL 16 migrations, Redis 7 as queue, Next.js 15 App Router with TypeScript strict, Tailwind and TanStack Query, Node 22/Express reference consumer fixtures, Docker Compose, GitHub Actions. The closed technology lock is audited in CI by `scripts/verify-technology-lock.sh`; no other languages or frameworks are used.
 
-## Data ownership
-All demo data is synthetic (`demo-platform`, fixture fingerprints, never fake git SHAs). No real customer data, no credentials in tracked files. License: none asserted; all content original.
+## Tradeoffs and limits
+
+Unsupported OpenAPI/SQL constructs stay UNKNOWN (fail closed) instead of guessed. Only registered consumers are mapped. Consumer execution covers the two pinned reference suites under a controlled fixture system. GitHub App Checks mode is `APP_MODE_UNCONFIGURED` without installation credentials. Public hosted deployment is not attempted in this environment; the Docker Compose path is the documented deployment route. Full detail: [docs/LIMITATIONS.md](docs/LIMITATIONS.md), [docs/DECISIONS.md](docs/DECISIONS.md), evidence map: [docs/EVIDENCE_INDEX.md](docs/EVIDENCE_INDEX.md), portfolio summary: [docs/PORTFOLIO_INTEGRATION.md](docs/PORTFOLIO_INTEGRATION.md).
+
+## Data provenance
+
+All example records are a versioned evaluation dataset prepared for testing: reference producer and consumer services, compatibility fixtures, and a preconfigured evaluation domain. See [docs/DATA_PROVENANCE.md](docs/DATA_PROVENANCE.md) for what each artifact is and how the schema structurally distinguishes fixture-sourced contracts from GitHub-sourced ones.
+
+---
+
+*Independent engineering portfolio project.* RippleGate was designed and built as a portfolio system: deterministic OpenAPI change analysis, supported PostgreSQL migration classification, registered consumer impact analysis, reproducible consumer tests, evidence-rich release decisions, authorization boundaries, and reviewable CI workflows. No customer, production traffic, or employer affiliation is claimed.
